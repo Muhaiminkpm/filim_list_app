@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "748902285994",
+    "project_id": "filimlistapp999",
+    "storage_bucket": "filimlistapp999.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:748902285994:android:d427ce6320910f33f286d3",
+        "android_client_info": {
+          "package_name": "com.example.filim_list_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLMwv5JvBc29LbomixyPxW6buVW039f5w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
