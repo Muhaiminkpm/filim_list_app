@@ -48,47 +48,42 @@ class _HomeScreenState extends State<HomeScreen> {
                   return const Center(child: Text('No results found.'));
                 } else {
                   return GridView.builder(
+                    padding: const EdgeInsets.all(8.0),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      crossAxisSpacing: 8.0,
-                      mainAxisSpacing: 8.0,
+
+                      childAspectRatio: 0.5, // Adjust aspect ratio for layout
                     ),
                     itemCount: snapshot.data!.results.length,
                     itemBuilder: (context, index) {
                       final movie = snapshot.data!.results[index];
                       return Card(
-                        margin: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 8,
-                        ),
                         child: Column(
-                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             AspectRatio(
-                              aspectRatio: 3 / 3,
+                              aspectRatio: 2 / 3,
                               child: Image.network(
                                 'https://image.tmdb.org/t/p/original${movie.posterPath}',
                                 fit: BoxFit.cover,
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      movie.title,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(fontSize: 14.0),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  Text(
-                                    ' ${movie.voteAverage}',
-                                  ),
-                                ],
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(
+                                movie.title,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 14.0),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                              child: Text(
+                                'Rating: ${movie.voteAverage}',
+                                style: const TextStyle(fontSize: 12.0),
                               ),
                             ),
                           ],
