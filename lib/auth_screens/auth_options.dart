@@ -1,7 +1,7 @@
+import 'package:filim_list_app/Home/favorites_movie.dart';
 import 'package:filim_list_app/auth_screens/user_login.dart';
 import 'package:filim_list_app/auth_screens/user_singnup.dart';
 import 'package:flutter/material.dart';
-
 import '../Home/home_screen.dart';
 
 class AuthOptions extends StatefulWidget {
@@ -47,6 +47,10 @@ class _AuthOptions extends State<AuthOptions> {
                   UseElevated(name: 'set', onPressed: (){
           Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
         }, selectColor: Colors.black),
+        SizedBox(height: 20),
+        UseElevated(name: 'Favorite', onPressed:(){
+           Navigator.push(context, MaterialPageRoute(builder: (context)=>FavoriteMovies()));
+        }, selectColor: Colors.green)
             ],
           ),
         ),

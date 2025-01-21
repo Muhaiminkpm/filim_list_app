@@ -1,7 +1,9 @@
 import 'package:filim_list_app/auth_screens/auth_options.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import '../Api/search_movies.dart';
 import '../auth_screens/auth_service.dart';
+import '../model/favorite_model.dart';
 import '../model/model_movie.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -16,10 +18,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final _authService = AuthService();
 
+  final Box<MovieModel> _favoritesBox = Hive.box<MovieModel>('favoritesBox');
+
   @override
   void initState() {
     super.initState();
     displayMovie = fetchMovie(); // Ensure fetchMovie returns a Future<Movies>
+  }
+
+  void _toggleFavorite(MovieModel movie) {
+    setState(() {
+      if (_favoritesBox.containsKey(movie.id)) {
+        _favoritesBox.delete(movie.id);
+      } else {
+        _favoritesBox.put(movie.id, movie);
+      }
+    });
   }
 
   @override
@@ -53,11 +67,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
 
-                      childAspectRatio: 0.5, // Adjust aspect ratio for layout
+                      childAspectRatio: 0.4, // Adjust aspect ratio for layout
                     ),
                     itemCount: snapshot.data!.results.length,
                     itemBuilder: (context, index) {
                       final movie = snapshot.data!.results[index];
+                      final movieModel = MovieModel(
+                        id: movie.id,
+                        title: movie.title,
+                        posterPath: movie.posterPath,
+                        voteAverage: movie.voteAverage,
+                      );
+                      final isFavorite = _favoritesBox.containsKey(movie.id);
                       return Card(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -66,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               aspectRatio: 2 / 3,
                               child: Image.network(
                                 'https://image.tmdb.org/t/p/original${movie.posterPath}',
+                                //https://api.themoviedb.org/3/movie/now_playing
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -85,6 +107,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 'Rating: ${movie.voteAverage}',
                                 style: const TextStyle(fontSize: 12.0),
                               ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: isFavorite ? Colors.red : null,
+                              ),
+                              onPressed: () => _toggleFavorite(movieModel),
                             ),
                           ],
                         ),
