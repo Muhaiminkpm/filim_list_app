@@ -1,9 +1,11 @@
 import 'package:filim_list_app/auth_screens/auth_options.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import '../Api/search_movies.dart';
 import '../auth_screens/auth_service.dart';
-import '../model/favorite_model.dart';
+import '../firebase_firestore/firestore_service.dart';
+import '../hive/favorite_model.dart';
 import '../model/model_movie.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,6 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final _authService = AuthService();
 
   final Box<MovieModel> _favoritesBox = Hive.box<MovieModel>('favoritesBox');
+  final FirestoreService _firestoreService = FirestoreService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -26,14 +30,18 @@ class _HomeScreenState extends State<HomeScreen> {
     displayMovie = fetchMovie(); // Ensure fetchMovie returns a Future<Movies>
   }
 
-  void _toggleFavorite(MovieModel movie) {
-    setState(() {
+  void _toggleFavorite(MovieModel movie) async {
+    final user = _auth.currentUser;
+    if (user != null) {
       if (_favoritesBox.containsKey(movie.id)) {
+        await _firestoreService.removeFavoriteMovie(user.uid, movie.id);
         _favoritesBox.delete(movie.id);
       } else {
+        await _firestoreService.addFavoriteMovie(user.uid, movie);
         _favoritesBox.put(movie.id, movie);
       }
-    });
+      setState(() {});
+    }
   }
 
   @override
@@ -150,3 +158,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+// rules_version = '2';
+
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /{document=**} {
+//       allow read, write: if
+//           request.time < timestamp.date(2025, 2, 21);
+//     }
+//   }
+// }

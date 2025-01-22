@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:filim_list_app/auth_screens/auth_options.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'hive/favorite_model.dart';
 
-import 'model/favorite_model.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,7 @@ Future<void> main() async {
   await Hive.openBox('myBox');
   Hive.registerAdapter(MovieModelAdapter());
   await Hive.openBox<MovieModel>('favoritesBox');
+  FirebaseFirestore.instance.settings = Settings(persistenceEnabled: true);
 
 // Ideal time to initialize
 // Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
