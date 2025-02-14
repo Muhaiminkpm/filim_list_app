@@ -31,6 +31,7 @@ class _SignupControllerState extends State<SignupController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Padding(
         padding: EdgeInsets.all(20),
         child: Form(
@@ -73,7 +74,7 @@ class _SignupControllerState extends State<SignupController> {
                       }
                     }
                   },
-                  selectColor: Colors.green)
+                  )
             ],
           ),
         ),

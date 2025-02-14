@@ -27,7 +27,7 @@ class _AuthOptions extends State<AuthOptions> {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => UserLogin()));
                   },
-                  selectColor: Colors.green),
+                 ),
               SizedBox(height: 20),
               UseElevated(
                   name: 'SignUp',
@@ -37,20 +37,30 @@ class _AuthOptions extends State<AuthOptions> {
                         MaterialPageRoute(
                             builder: (context) => SignupController()));
                   },
-                  selectColor: Colors.green),
+                  ),
               SizedBox(height: 20),
               UseElevated(
                   name: 'Sign With Google',
                   onPressed: () {},
-                  selectColor: Colors.green),
-                  SizedBox(height: 20),
-                  UseElevated(name: 'set', onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>HomeScreen()));
-        }, selectColor: Colors.black),
-        SizedBox(height: 20),
-        UseElevated(name: 'Favorite', onPressed:(){
-           Navigator.push(context, MaterialPageRoute(builder: (context)=>FavoriteMovies()));
-        }, selectColor: Colors.green)
+                 ),
+              SizedBox(height: 20),
+              UseElevated(
+                  name: 'set',
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HomeScreen()));
+                  },
+                 ),
+              SizedBox(height: 20),
+              UseElevated(
+                  name: 'Favorite',
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FavoriteMovies()));
+                  },
+                 )
             ],
           ),
         ),
@@ -62,30 +72,29 @@ class _AuthOptions extends State<AuthOptions> {
 class UseElevated extends StatelessWidget {
   final String name;
   final Function() onPressed;
-  final Color selectColor;
   const UseElevated({
     required this.name,
     required this.onPressed,
-    required this.selectColor,
+    
     super.key,
   });
-
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ElevatedButton.styleFrom(
-            backgroundColor: selectColor,
+            backgroundColor: Colors.brown,
             fixedSize: const Size(250, 40),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10))),
+                borderRadius: BorderRadius.circular(20))),
         onPressed: onPressed,
-        child: Text(name));
+        child: Text(name,style: TextStyle(
+          color: Colors.black
+        ),));
   }
 }
 
 class UseTextFormField extends StatelessWidget {
-
   final String cammandText;
   final String hintText;
   final TextEditingController textController;
@@ -95,7 +104,6 @@ class UseTextFormField extends StatelessWidget {
     required this.textController,
     super.key,
   });
-
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +115,7 @@ class UseTextFormField extends StatelessWidget {
         fillColor: Colors.white,
         filled: true,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
         ),
       ),
     );
