@@ -7,6 +7,9 @@ import '../auth_screens/auth_service.dart';
 import '../firebase_firestore/firestore_service.dart';
 import '../hive/favorite_model.dart';
 import '../model/model_movie.dart';
+import '../widget/custom_bottom_navigation_bar.dart';
+import 'favorites_movie.dart';
+import 'movie_details.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,17 +20,17 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<Movies> displayMovie;
-
   final _authService = AuthService();
-
   final Box<MovieModel> _favoritesBox = Hive.box<MovieModel>('favoritesBox');
   final FirestoreService _firestoreService = FirestoreService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  int _currentIndex = 0;
+
   @override
   void initState() {
     super.initState();
-    displayMovie = fetchMovie(); // Ensure fetchMovie returns a Future<Movies>
+    displayMovie = fetchMovie();
   }
 
   void _toggleFavorite(MovieModel movie) async {
@@ -44,127 +47,191 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Movie List'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: FutureBuilder<Movies>(
-              future: displayMovie,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error: ${snapshot.error}',
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  );
-                } else if (!snapshot.hasData ||
-                    snapshot.data!.results.isEmpty) {
-                  return const Center(child: Text('No results found.'));
-                } else {
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+  void _onNavItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
 
-                      childAspectRatio: 0.4, // Adjust aspect ratio for layout
-                    ),
-                    itemCount: snapshot.data!.results.length,
-                    itemBuilder: (context, index) {
-                      final movie = snapshot.data!.results[index];
-                      final movieModel = MovieModel(
-                        id: movie.id,
-                        title: movie.title,
-                        posterPath: movie.posterPath,
-                        voteAverage: movie.voteAverage,
-                      );
-                      final isFavorite = _favoritesBox.containsKey(movie.id);
-                      return Card(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            AspectRatio(
-                              aspectRatio: 2 / 3,
-                              child: Image.network(
-                                'https://image.tmdb.org/t/p/original${movie.posterPath}',
-                                //https://api.themoviedb.org/3/movie/now_playing
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                                movie.title,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 14.0),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4.0),
-                              child: Text(
-                                'Rating: ${movie.voteAverage}',
-                                style: const TextStyle(fontSize: 12.0),
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                isFavorite
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                color: isFavorite ? Colors.red : null,
-                              ),
-                              onPressed: () => _toggleFavorite(movieModel),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
-            ),
+    switch (index) {
+      case 0:
+        // Home - already on home screen
+        break;
+      case 1:
+        // Navigate to Favorites
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const FavoriteMovies()),
+        );
+        break;
+      case 2:
+        // Playlist - Add your playlist navigation logic here
+        break;
+      case 3:
+        _showSignOutDialog();
+        break;
+    }
+  }
+
+  void _showSignOutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Sign Out'),
+        content: Text('Are you sure you want to sign out?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
           ),
-        ],
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ElevatedButton(
-            child: const Text('Sign Out'),
+          TextButton(
             onPressed: () async {
+              Navigator.pop(context);
               await _authService.signOut();
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const AuthOptions()),
               );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              minimumSize: const Size(double.infinity, 50),
-            ),
+            child: Text('Sign Out'),
           ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(onPressed: () {}, icon: const Icon(Icons.sort)),
+        actions: [
+          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Movies',
+              style: TextStyle(fontSize: 32),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Popular',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Row(
+                    children: [
+                      Text(
+                        'See all',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                      Icon(Icons.chevron_right, color: Colors.blue),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: FutureBuilder<Movies>(
+                future: displayMovie,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    );
+                  } else if (!snapshot.hasData ||
+                      snapshot.data!.results.isEmpty) {
+                    return const Center(child: Text('No results found.'));
+                  } else {
+                    return GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.4,
+                      ),
+                      itemCount: snapshot.data!.results.length,
+                      itemBuilder: (context, index) {
+                        final movie = snapshot.data!.results[index];
+                        final movieModel = MovieModel(
+                          id: movie.id,
+                          title: movie.title,
+                          posterPath: movie.posterPath,
+                          voteAverage: movie.voteAverage,
+                        );
+                        final isFavorite = _favoritesBox.containsKey(movie.id);
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MovieDetailsScreen(
+                                  movie: movieModel,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                AspectRatio(
+                                  aspectRatio: 2 / 3,
+                                  child: Image.network(
+                                    'https://image.tmdb.org/t/p/original${movie.posterPath}',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Text(
+                                  movie.title,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 14.0),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  'Rating: ${movie.voteAverage}',
+                                  style: const TextStyle(fontSize: 12.0),
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    isFavorite
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: isFavorite ? Colors.red : null,
+                                  ),
+                                  onPressed: () => _toggleFavorite(movieModel),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
         ),
+      ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onNavItemTapped,
       ),
     );
   }
 }
-// rules_version = '2';
-
-// service cloud.firestore {
-//   match /databases/{database}/documents {
-//     match /{document=**} {
-//       allow read, write: if
-//           request.time < timestamp.date(2025, 2, 21);
-//     }
-//   }
-// }

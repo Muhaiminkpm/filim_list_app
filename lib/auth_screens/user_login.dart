@@ -81,9 +81,17 @@ class _UserLogin extends State<UserLogin> {
                   height: 20,
                 ),
                 UseElevated(
-                  name: 'Continue with Google',
-                  onPressed: () {},
-                ),
+  name: 'Continue with Google',
+  onPressed: () async {
+    final user = await _authServise.signInWithGoogle();
+    if (user != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    }
+  },
+),
               ],
             ),
           ),

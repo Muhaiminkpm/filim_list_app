@@ -12,7 +12,12 @@
           "package_name": "com.example.filim_list_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "748902285994-10vb0apnq9da841ko2o0ge0add6ihlbc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDLMwv5JvBc29LbomixyPxW6buVW039f5w"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "748902285994-10vb0apnq9da841ko2o0ge0add6ihlbc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "748902285994-nvj467tjjd0i7da5nlj6e4biqcutmsmu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.filimListApp"
+              }
+            }
+          ]
         }
       }
     }
